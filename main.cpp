@@ -4,7 +4,6 @@
 #include<time.h>
 #include<malloc.h>
 #include<math.h>
-#include<windows.h>
 using namespace std;
 #define MAXSIZE 100//用于转换表达式与求解
 char str[MAXSIZE],str2[MAXSIZE];
@@ -447,15 +446,9 @@ void print_answer()//打印答案
     }
     printf("*------------------------------------------------*\n");
 }
-int color(int c)//更改颜色
-{
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),c);
-    return 0;
-}
 int main()
 {
     int ctrl;
-    color(11);
     while(1)
     {
 
