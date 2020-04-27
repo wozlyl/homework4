@@ -4,20 +4,21 @@
 #include<time.h>
 #include<malloc.h>
 #include<math.h>
+#include<windows.h>
 using namespace std;
-#define MAXSIZE 100//ÓÃÓÚ×ª»»±í´ïÊ½ÓëÇó½â
+#define MAXSIZE 100//ç”¨äºè½¬æ¢è¡¨è¾¾å¼ä¸æ±‚è§£
 char str[MAXSIZE],str2[MAXSIZE];
 int answer_count=0;
-double answer[500];//¼ÇÂ¼±í´ïÊ½´ğ°¸
-int testnum=-1;//ÌâÄ¿ÊıÁ¿
-int maxnum=-1;//×î´óÊı
-int symbolnum[4]={0};//ÔËËã·ûÊı
-int digitnum=-1;//ÌâÄ¿Êı×Ö¸öÊı
-int bracketflag=-1;//ÊÇ·ñÓĞÀ¨ºÅ
-int littleflag=-1;//ÊÇ·ñÓĞĞ¡Êı
-int fileflag=-1;//ÊÇ·ñÊä³öµ½ÎÄ¼ş
+double answer[500];//è®°å½•è¡¨è¾¾å¼ç­”æ¡ˆ
+int testnum=-1;//é¢˜ç›®æ•°é‡
+int maxnum=-1;//æœ€å¤§æ•°
+int symbolnum[4]={0};//è¿ç®—ç¬¦æ•°
+int digitnum=-1;//é¢˜ç›®æ•°å­—ä¸ªæ•°
+int bracketflag=-1;//æ˜¯å¦æœ‰æ‹¬å·
+int littleflag=-1;//æ˜¯å¦æœ‰å°æ•°
+int fileflag=-1;//æ˜¯å¦è¾“å‡ºåˆ°æ–‡ä»¶
 
-void file_clear() //Çå¿ÕËùÓĞÎÄ¼şÄÚÈİ
+void file_clear() //æ¸…ç©ºæ‰€æœ‰æ–‡ä»¶å†…å®¹
 {
     FILE *fp;
     fp=fopen("D:test_question.txt","w");
@@ -27,38 +28,38 @@ void file_clear() //Çå¿ÕËùÓĞÎÄ¼şÄÚÈİ
     fp=fopen("D:test_answer.txt","w");
     fclose(fp);
 }
-void input_fun()//²ÎÊıÊäÈëÒıµ¼,ÓĞ³ö´í´¦Àí
+void input_fun()//å‚æ•°è¾“å…¥å¼•å¯¼,æœ‰å‡ºé”™å¤„ç†
 {
-    printf("*  ÇëÊäÈëÌâÄ¿ÊıÄ¿(´óÓÚ0):                        *\n    ");
+    printf("*  è¯·è¾“å…¥é¢˜ç›®æ•°ç›®(å¤§äº0):                        *\n    ");
     while(testnum<=0)
     {
         scanf("%d",&testnum);
         if(testnum<=0)
         {
-            printf("*  ÊıÄ¿Ó¦´óÓÚ0,ÇëÖØĞÂÊäÈë:                       *\n    ");
+            printf("*  æ•°ç›®åº”å¤§äº0,è¯·é‡æ–°è¾“å…¥:                       *\n    ");
         }
     }
-    printf("*  ÇëÊäÈëÌâÄ¿ÔËËãÊıÖµµÄ×î´óÊı(´óÓÚ0):            *\n    ");
+    printf("*  è¯·è¾“å…¥é¢˜ç›®è¿ç®—æ•°å€¼çš„æœ€å¤§æ•°(å¤§äº0):            *\n    ");
     while(maxnum<=0)
     {
         scanf("%d",&maxnum);
         if(maxnum<=0)
         {
-            printf("*  ×î´óÊıÓ¦´óÓÚ0,ÇëÖØĞÂÊäÈë:                     *\n    ");
+            printf("*  æœ€å¤§æ•°åº”å¤§äº0,è¯·é‡æ–°è¾“å…¥:                     *\n    ");
         }
     }
-    printf("*  ÇëÊäÈëÃ¿ÌâÊıÖµµÄÊıÄ¿(´óÓÚ1):                  *\n    ");
+    printf("*  è¯·è¾“å…¥æ¯é¢˜æ•°å€¼çš„æ•°ç›®(å¤§äº1):                  *\n    ");
     while(digitnum<=1)
     {
         scanf("%d",&digitnum);
         if(digitnum<=1)
         {
-            printf("*  ÊıÄ¿Ó¦´óÓÚ0,ÇëÖØĞÂÊäÈë:                       *\n    ");
+            printf("*  æ•°ç›®åº”å¤§äº0,è¯·é‡æ–°è¾“å…¥:                       *\n    ");
         }
     }
     int flag=1,symnum;
-    printf("*  ÇëÊäÈëÔËËã·û(ÈçÊäÈë1 2 -1,Ôòº¬ÓĞ+ -Á½¸öÔËËã·û)*\n");
-    printf("*  ±àºÅ¶ÔÓ¦ÔËËã·û 1:+,2:-,3:¡Á,4:¡Â; ÊäÈë-1½áÊø  *\n    ");
+    printf("*  è¯·è¾“å…¥è¿ç®—ç¬¦(å¦‚è¾“å…¥1 2 -1,åˆ™å«æœ‰+ -ä¸¤ä¸ªè¿ç®—ç¬¦)*\n");
+    printf("*  ç¼–å·å¯¹åº”è¿ç®—ç¬¦ 1:+,2:-,3:Ã—,4:Ã·; è¾“å…¥-1ç»“æŸ  *\n    ");
     while(flag)
     {
         scanf("%d",&symnum);
@@ -71,48 +72,48 @@ void input_fun()//²ÎÊıÊäÈëÒıµ¼,ÓĞ³ö´í´¦Àí
             default:flag=0;
         }
     }
-    printf("*  ÊÇ·ñÓĞÀ¨ºÅ(ÊäÈë1:ÓĞ,0:Ã»ÓĞ):                  *\n    ");
+    printf("*  æ˜¯å¦æœ‰æ‹¬å·(è¾“å…¥1:æœ‰,0:æ²¡æœ‰):                  *\n    ");
     while(bracketflag<0)
     {
         scanf("%d",&bracketflag);
         if(bracketflag!=1 && bracketflag!=0)
         {
-            printf("*  ÊäÈë´íÎó,ÇëÖØĞÂÊäÈë:                          *\n    ");
+            printf("*  è¾“å…¥é”™è¯¯,è¯·é‡æ–°è¾“å…¥:                          *\n    ");
         }
     }
-    printf("*  ÊÇ·ñÓĞĞ¡Êı(ÊäÈë1:ÓĞ,0:Ã»ÓĞ):                  *\n    ");
+    printf("*  æ˜¯å¦æœ‰å°æ•°(è¾“å…¥1:æœ‰,0:æ²¡æœ‰):                  *\n    ");
     while(littleflag<0)
     {
         scanf("%d",&littleflag);
         if(littleflag!=1 && littleflag!=0)
         {
-            printf("*  ÊäÈë´íÎó,ÇëÖØĞÂÊäÈë:                          *\n    ");
+            printf("*  è¾“å…¥é”™è¯¯,è¯·é‡æ–°è¾“å…¥:                          *\n    ");
         }
     }
-    printf("*  ÊÇ·ñĞ´ÈëÎÄ¼ş(ÊäÈë1:Ğ´,0:²»Ğ´):                *\n    ");
+    printf("*  æ˜¯å¦å†™å…¥æ–‡ä»¶(è¾“å…¥1:å†™,0:ä¸å†™):                *\n    ");
     while(fileflag<0)
     {
         scanf("%d",&fileflag);
         if(fileflag!=1 && fileflag!=0)
         {
-            printf("*  ÊäÈë´íÎó,ÇëÖØĞÂÊäÈë:                          *\n    ");
+            printf("*  è¾“å…¥é”™è¯¯,è¯·é‡æ–°è¾“å…¥:                          *\n    ");
         }
     }
 }
-//*****Ëæ»úÉú³É±í´ïÊ½º¯Êı*****
-int randdigit()//Ëæ»úÉú³ÉÕûÊı
+//*****éšæœºç”Ÿæˆè¡¨è¾¾å¼å‡½æ•°*****
+int randdigit()//éšæœºç”Ÿæˆæ•´æ•°
 {
     int n;
     n=rand()%maxnum;
     return n;
 }
-float randlittle()//Ëæ»úÉú³ÉĞ¡Êı
+float randlittle()//éšæœºç”Ÿæˆå°æ•°
 {
     float n;
     n = rand()%maxnum + rand()%100*0.01;
     return n;
 }
-int randsymbol()//Ëæ»úÉú³ÉÔËËã·û
+int randsymbol()//éšæœºç”Ÿæˆè¿ç®—ç¬¦
 {
     int n,flag=1;
     while(flag)
@@ -125,23 +126,23 @@ int randsymbol()//Ëæ»úÉú³ÉÔËËã·û
     }
     return n+1;
 }
-int bracket_fun()//ÅĞ¶ÏÉú³ÉÀ¨ºÅÎ»ÖÃ
+int bracket_fun()//åˆ¤æ–­ç”Ÿæˆæ‹¬å·ä½ç½®
 {
     int n;
-    n=rand()%(digitnum-1)-1;//Ëæ»úÊı·¶Î§-1ÖÁdigitnum-2
+    n=rand()%(digitnum-1)-1;//éšæœºæ•°èŒƒå›´-1è‡³digitnum-2
     return n;
 }
 
-//*****±í´ïÊ½×ª»»³ÉÄæ²¨À¼Ê½²¢Çó½â*****
-void GetStr(char *str) //¶ÁÈ¡±í´ïÊ½
+//*****è¡¨è¾¾å¼è½¬æ¢æˆé€†æ³¢å…°å¼å¹¶æ±‚è§£*****
+void GetStr(char *str) //è¯»å–è¡¨è¾¾å¼
 {
     FILE *fp;
     int i=0;
     fp=fopen("D:test_question2.txt","rb");
-    rewind(fp);//¶¨Î»ÎÄ¼şÖ¸ÕëÎªÊ×Î»
+    rewind(fp);//å®šä½æ–‡ä»¶æŒ‡é’ˆä¸ºé¦–ä½
     while ((str[i] = fgetc(fp)) != EOF)
     {
-        if (str[i] == ' ')//È¥µô¶àÓàµÄ¿Õ¸ñ
+        if (str[i] == ' ')//å»æ‰å¤šä½™çš„ç©ºæ ¼
         {
             i--;
         }
@@ -151,22 +152,22 @@ void GetStr(char *str) //¶ÁÈ¡±í´ïÊ½
     str[i] = '\0';
     fclose(fp);
 }
-void show_answer(char *str,double answer,int no) //Ğ´´ğ°¸µ½ÎÄ¼ş
+void show_answer(char *str,double answer,int no) //å†™ç­”æ¡ˆåˆ°æ–‡ä»¶
 {
     FILE *fp;
     fp=fopen("D:test_answer.txt","aw");
     fprintf(fp,"(%d) %.2f\n",no,answer);
     fclose(fp);
 }
-double CharToDouble(char *str)//½«×Ö·û´®×ª»»Îª¸¡µãÊı
+double CharToDouble(char *str)//å°†å­—ç¬¦ä¸²è½¬æ¢ä¸ºæµ®ç‚¹æ•°
 {
     double sumInt=0,sumDec=0,e=1;
     int i=0;
-    while((str[i] >= '0')&&(str[i] <= '9'))//Ê¶±ğÊı×Ö
+    while((str[i] >= '0')&&(str[i] <= '9'))//è¯†åˆ«æ•°å­—
     {
         sumInt=sumInt*10 + str[i++]-'0';
     }
-    if(str[i] == '.') //Èç¹ûº¬Ğ¡Êı£¬´¦ÀíĞ¡Êı²¿·Ö
+    if(str[i] == '.') //å¦‚æœå«å°æ•°ï¼Œå¤„ç†å°æ•°éƒ¨åˆ†
     {
         while(str[++i] != '\0')
         {
@@ -176,61 +177,61 @@ double CharToDouble(char *str)//½«×Ö·û´®×ª»»Îª¸¡µãÊı
     }
     return sumInt + sumDec / e;
 }
-void Translate(char str[], char exp[]) //×ª»»ÎªÄæ²¨À¼±í´ïÊ½
+void Translate(char str[], char exp[]) //è½¬æ¢ä¸ºé€†æ³¢å…°è¡¨è¾¾å¼
 {
     char stack[MAXSIZE];
     int i=0, k=0, top=-1;
     while(str[i] != '#')
     {
-        if(str[i] == '(')//Ö±½Ó½«'('ÈëÕ»
+        if(str[i] == '(')//ç›´æ¥å°†'('å…¥æ ˆ
         {
             stack[++top]=str[i++];
         }
         else if(str[i] == ')')
         {
-            while(top >= 0 && stack[top] != '(') //½«'('Ö®Ç°µÄ·ûºÅ³öÕ»£¬²¢´æ´¢µ½Äæ²¨À¼±í´ïÊ½
+            while(top >= 0 && stack[top] != '(') //å°†'('ä¹‹å‰çš„ç¬¦å·å‡ºæ ˆï¼Œå¹¶å­˜å‚¨åˆ°é€†æ³¢å…°è¡¨è¾¾å¼
             {
                 exp[k++]=stack[top--];
             }
-            if(top < 0) //'('²»×ã£¬¼´ÓĞ¶àÓàµÄ')'
+            if(top < 0) //'('ä¸è¶³ï¼Œå³æœ‰å¤šä½™çš„')'
             {
-                puts("'('²»Æ¥Åä\n");
+                puts("'('ä¸åŒ¹é…\n");
                 exp[k++] = '\0';
                 return ;
             }
-            top--;//È¥µô '('
+            top--;//å»æ‰ '('
             i++;
         }
         else if(str[i] == '+' || str[i] == '-')
         {
-            while(top >= 0 && stack[top] != '(') //Èç¹ûÓĞ'('£¬½«'('Ö®Ç°µÄ·ûºÅ³öÕ»£¬·ñÔòËùÓĞ·ûºÅ³öÕ»£¬²¢´æ´¢µ½Äæ²¨À¼±í´ïÊ½
+            while(top >= 0 && stack[top] != '(') //å¦‚æœæœ‰'('ï¼Œå°†'('ä¹‹å‰çš„ç¬¦å·å‡ºæ ˆï¼Œå¦åˆ™æ‰€æœ‰ç¬¦å·å‡ºæ ˆï¼Œå¹¶å­˜å‚¨åˆ°é€†æ³¢å…°è¡¨è¾¾å¼
             {
                 exp[k++]=stack[top--];
             }
-            stack[++top]=str[i++]; //½«ĞÂµÄÔËËã·ûºÅÈëÕ»
+            stack[++top]=str[i++]; //å°†æ–°çš„è¿ç®—ç¬¦å·å…¥æ ˆ
         }
         else if(str[i] == '*' || str[i] == '/')
         {
-            while(top >= 0 && (stack[top] == '*' || stack[top] == '/')) //½«'*'ºÍ'/'Ö®Ç°µÄ·ûºÅ³öÕ»£¬²¢´æ´¢µ½Äæ²¨À¼±í´ïÊ½
+            while(top >= 0 && (stack[top] == '*' || stack[top] == '/')) //å°†'*'å’Œ'/'ä¹‹å‰çš„ç¬¦å·å‡ºæ ˆï¼Œå¹¶å­˜å‚¨åˆ°é€†æ³¢å…°è¡¨è¾¾å¼
             {
                 exp[k++]=stack[top--];
             }
-            stack[++top]=str[i++]; //½«ĞÂµÄÔËËã·ûºÅÈëÕ»
+            stack[++top]=str[i++]; //å°†æ–°çš„è¿ç®—ç¬¦å·å…¥æ ˆ
         }
         else
         {
-            while((str[i] >= '0' && str[i] <= '9') || str[i] == '.') //½«¸¡µãÊıÖ±½Ó´æ´¢µ½Äæ²¨À¼±í´ïÊ½
+            while((str[i] >= '0' && str[i] <= '9') || str[i] == '.') //å°†æµ®ç‚¹æ•°ç›´æ¥å­˜å‚¨åˆ°é€†æ³¢å…°è¡¨è¾¾å¼
             {
                 exp[k++]=str[i++];
             }
-            exp[k++]='#'; //Ôö¼ÓÒ»¸ö¸¡µãÊı½áÊø·ûºÅ£¬ÒÔ±ãÕıÈ·ÌáÈ¡¸¡µãÊı
+            exp[k++]='#'; //å¢åŠ ä¸€ä¸ªæµ®ç‚¹æ•°ç»“æŸç¬¦å·ï¼Œä»¥ä¾¿æ­£ç¡®æå–æµ®ç‚¹æ•°
         }
     }
-    while(top >= 0) //½«Õ»ÖĞËùÓĞÔËËã·ûºÅ´æ´¢µ½Äæ²¨À¼±í´ïÊ½
+    while(top >= 0) //å°†æ ˆä¸­æ‰€æœ‰è¿ç®—ç¬¦å·å­˜å‚¨åˆ°é€†æ³¢å…°è¡¨è¾¾å¼
     {
-        if(stack[top] == '(') //ÓĞ¶àÓàµÄ'('
+        if(stack[top] == '(') //æœ‰å¤šä½™çš„'('
         {
-            puts("'('²»Æ¥Åä\n");
+            puts("'('ä¸åŒ¹é…\n");
             exp[k++]='\0';
             return;
         }
@@ -238,7 +239,7 @@ void Translate(char str[], char exp[]) //×ª»»ÎªÄæ²¨À¼±í´ïÊ½
     }
     exp[k++]='\0';
 }
-double CompValue(char *exp) //ÇóÄæ²¨À¼±í´ïÊ½µÄÖµ
+double CompValue(char *exp) //æ±‚é€†æ³¢å…°è¡¨è¾¾å¼çš„å€¼
 {
     char tempStr[MAXSIZE];
     double stack[MAXSIZE];
@@ -254,11 +255,11 @@ double CompValue(char *exp) //ÇóÄæ²¨À¼±í´ïÊ½µÄÖµ
             }
             tempStr[k]='\0';
             stack[++top] = CharToDouble(tempStr);
-            i++;//Ìø¹ı'#'
+            i++;//è·³è¿‡'#'
         }
         else
         {
-            switch(exp[i++]) //½«¼ÆËã½á¹ûÈëÕ»£¬²¢ÍË³ö¶àÓàµÄÊı×Ö
+            switch(exp[i++]) //å°†è®¡ç®—ç»“æœå…¥æ ˆï¼Œå¹¶é€€å‡ºå¤šä½™çš„æ•°å­—
             {
                 case '+':
                     stack[top-1] += stack[top];
@@ -280,27 +281,27 @@ double CompValue(char *exp) //ÇóÄæ²¨À¼±í´ïÊ½µÄÖµ
                     }
                     break;
             }
-            top--;//ÍË³ö¶àÓàµÄÊı×Ö
+            top--;//é€€å‡ºå¤šä½™çš„æ•°å­—
         }
     }
     return stack[top];
 }
 
-void create()//Éú³É±í´ïÊ½
+void create()//ç”Ÿæˆè¡¨è¾¾å¼
 {
     int nu1;
     float nu2;
     int i,sy;
-    int bf=-2;//Æ¥ÅäÀ¨ºÅ
+    int bf=-2;//åŒ¹é…æ‹¬å·
     int num1=testnum;
     int num2=digitnum;
-    printf("*                  Éú³ÉÌâÄ¿ÈçÏÂ                  *\n");
+    printf("*                  ç”Ÿæˆé¢˜ç›®å¦‚ä¸‹                  *\n");
     FILE *fp1=fopen("D:test_question.txt","w");
     FILE *fp2;
     while(num1>0)
     {
         fp2=fopen("D:test_question2.txt","w+");
-        if(bracketflag==1)//ÅĞ¶ÏÊÇ·ñÓĞÀ¨ºÅ
+        if(bracketflag==1)//åˆ¤æ–­æ˜¯å¦æœ‰æ‹¬å·
         {
             bf=bracket_fun();
         }
@@ -309,14 +310,14 @@ void create()//Éú³É±í´ïÊ½
         {
             fprintf(fp1,"(%d) ",testnum-num1+1);
         }
-        nu1=randdigit();//»ñÈ¡Ëæ»úÊı×Ö
+        nu1=randdigit();//è·å–éšæœºæ•°å­—
         nu2=randlittle();
-        if(bf==-1)//×óÀ¨ºÅÎ»ÖÃ
+        if(bf==-1)//å·¦æ‹¬å·ä½ç½®
         {
             printf("(");
             fprintf(fp2,"( ");
         }
-        if(littleflag==1)//ÓĞĞ¡Êı
+        if(littleflag==1)//æœ‰å°æ•°
         {
             printf("%.2f",nu2);
             fprintf(fp2,"%.2f ",nu2);
@@ -326,13 +327,13 @@ void create()//Éú³É±í´ïÊ½
             printf("%d",nu1);
             fprintf(fp2,"%d ",nu1);
         }
-        if(fileflag==1)//Ğ´ÎÄ¼şÊ±
+        if(fileflag==1)//å†™æ–‡ä»¶æ—¶
         {
             if(bf==-1)
             {
                 fprintf(fp1,"(");
             }
-            if(littleflag==1)//ÓĞĞ¡Êı
+            if(littleflag==1)//æœ‰å°æ•°
             {
                 fprintf(fp1,"%.2f",nu2);
             }
@@ -363,30 +364,30 @@ void create()//Éú³É±í´ïÊ½
                     }
                     break;
                 case 3:
-                    printf("¡Á");
+                    printf("Ã—");
                     fprintf(fp2,"* ");
                     if(fileflag==1)
                     {
-                        fprintf(fp1,"¡Á");
+                        fprintf(fp1,"Ã—");
                     }
                     break;
                 case 4:
-                    printf("¡Â");
+                    printf("Ã·");
                     fprintf(fp2,"/ ");
                     if(fileflag==1)
                     {
-                        fprintf(fp1,"¡Â");
+                        fprintf(fp1,"Ã·");
                     }
                     break;
             }
-            nu1=randdigit();//»ñÈ¡Ëæ»úÊı×Ö
+            nu1=randdigit();//è·å–éšæœºæ•°å­—
             nu2=randlittle();
-            if(i==bf)//×óÀ¨ºÅÎ»ÖÃ
+            if(i==bf)//å·¦æ‹¬å·ä½ç½®
             {
                 printf("(");
                 fprintf(fp2,"( ");
             }
-            if(littleflag==1)//ÓĞĞ¡Êı
+            if(littleflag==1)//æœ‰å°æ•°
             {
                 printf("%.2f",nu2);
                 fprintf(fp2,"%.2f ",nu2);
@@ -396,18 +397,18 @@ void create()//Éú³É±í´ïÊ½
                 printf("%d",nu1);
                 fprintf(fp2,"%d ",nu1);
             }
-            if((i==0 && bf==-1) || (i==(bf+1)))//ÓÒÀ¨ºÅÎ»ÖÃ
+            if((i==0 && bf==-1) || (i==(bf+1)))//å³æ‹¬å·ä½ç½®
             {
                 printf(")");
                 fprintf(fp2,")");
             }
-            if(fileflag==1)//Ğ´ÎÄ¼şÊ±
+            if(fileflag==1)//å†™æ–‡ä»¶æ—¶
             {
                 if(i==bf)
                 {
                     fprintf(fp1,"(");
                 }
-                if(littleflag==1)//ÓĞĞ¡Êı
+                if(littleflag==1)//æœ‰å°æ•°
                 {
                     fprintf(fp1,"%.2f",nu2);
                 }
@@ -422,12 +423,12 @@ void create()//Éú³É±í´ïÊ½
             }
         }
         fclose(fp2);
-        GetStr(str);//»ñÈ¡±í´ïÊ½
-        Translate(str,str2);//Äæ²¨À¼Ê½Çó½â
-        answer[answer_count] = CompValue(str2);//½â´æÈë´ğ°¸Êı×é¼ÇÂ¼
-        show_answer(str,answer[answer_count],(testnum-num1+1)); //Êä³ö´ğ°¸
+        GetStr(str);//è·å–è¡¨è¾¾å¼
+        Translate(str,str2);//é€†æ³¢å…°å¼æ±‚è§£
+        answer[answer_count] = CompValue(str2);//è§£å­˜å…¥ç­”æ¡ˆæ•°ç»„è®°å½•
+        show_answer(str,answer[answer_count],(testnum-num1+1)); //è¾“å‡ºç­”æ¡ˆ
         answer_count++;
-        num1--;//¿ØÖÆÊıÖµ¸öÊı
+        num1--;//æ§åˆ¶æ•°å€¼ä¸ªæ•°
         printf("=\n");
         if(fileflag==1)
         {
@@ -437,29 +438,57 @@ void create()//Éú³É±í´ïÊ½
     fclose(fp1);
 }
 
-void print_answer()//´òÓ¡´ğ°¸
+void print_answer()//æ‰“å°ç­”æ¡ˆ
 {
-    printf("*                  ÌâÄ¿´ğ°¸ÈçÏÂ                  *\n");
+    printf("*                  é¢˜ç›®ç­”æ¡ˆå¦‚ä¸‹                  *\n");
     for(int i=0;i<answer_count;i++)
     {
         printf("*  (%d) %.2f\n",i+1,answer[i]);
     }
     printf("*------------------------------------------------*\n");
 }
+int color(int c)//æ›´æ”¹é¢œè‰²
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),c);
+    return 0;
+}
 int main()
 {
+    int ctrl;
+    color(11);
+    while(1)
+    {
+
+        printf("**************************************************\n");
+        printf("*--------------è‡ªåŠ¨ç”Ÿæˆå››åˆ™è¿ç®—ç³»ç»Ÿ--------------*\n");
+        printf("*----------------è¾“å…¥â€œ1â€è¿›å…¥ç³»ç»Ÿ---------------*\n");
+        printf("*----------------è¾“å…¥â€œ0â€é€€å‡ºç³»ç»Ÿ---------------*\n");
+        printf("**************************************************\n");
+        printf("*-----è¯·è¾“å…¥: ");
+        scanf("%d",&ctrl);
+        if(ctrl==0)
+        {
+            printf("*-----å·²é€€å‡ºç³»ç»Ÿ\r\n");
+            return 0;
+        }
+        else if(ctrl==1)
+        {
+            system("cls");
+            break;
+        }
+    }
     printf("**************************************************\n");
-    printf("*        »¶Ó­Ê¹ÓÃËÄÔòÔËËã×Ô¶¯Éú³ÉÏµÍ³£¡          *\n");
-    printf("*        ½ÓÏÂÀ´Çë°´ÕÕÏµÍ³ÌáÊ¾½øĞĞ²Ù×÷!           *\n");
+    printf("*        æ¬¢è¿ä½¿ç”¨å››åˆ™è¿ç®—è‡ªåŠ¨ç”Ÿæˆç³»ç»Ÿï¼          *\n");
+    printf("*        æ¥ä¸‹æ¥è¯·æŒ‰ç…§ç³»ç»Ÿæç¤ºè¿›è¡Œæ“ä½œ!           *\n");
     printf("*------------------------------------------------*\n");
-    file_clear();//ÎÄ¼ş³õÊ¼»¯
-    srand((int)time(0));//Ã¿´Î²úÉú²»Í¬µÄËæ»úÊı
-    input_fun();//ÊäÈë¸÷²ÎÊı
+    file_clear();//æ–‡ä»¶åˆå§‹åŒ–
+    srand((int)time(0));//æ¯æ¬¡äº§ç”Ÿä¸åŒçš„éšæœºæ•°
+    input_fun();//è¾“å…¥å„å‚æ•°
     printf("*------------------------------------------------*\n");
-    create();//Éú³É±í´ïÊ½
+    create();//ç”Ÿæˆè¡¨è¾¾å¼
     printf("*------------------------------------------------*\n");
     print_answer();
-    printf("*------------¸ĞĞ»ÄúµÄÊ¹ÓÃ,×£Ñ§Ï°½ø²½!------------*\n");
+    printf("*------------æ„Ÿè°¢æ‚¨çš„ä½¿ç”¨,ç¥å­¦ä¹ è¿›æ­¥!------------*\n");
     printf("**************************************************\n");
     return 0;
 }
