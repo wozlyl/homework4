@@ -131,7 +131,6 @@ int bracket_fun()//判断生成括号位置
     n=rand()%(digitnum-1)-1;//随机数范围-1至digitnum-2
     return n;
 }
-
 //*****表达式转换成逆波兰式并求解*****
 void GetStr(char *str) //读取表达式
 {
@@ -285,7 +284,6 @@ double CompValue(char *exp) //求逆波兰表达式的值
     }
     return stack[top];
 }
-
 void create()//生成表达式
 {
     int nu1;
@@ -436,7 +434,6 @@ void create()//生成表达式
     }
     fclose(fp1);
 }
-
 void print_answer()//打印答案
 {
     printf("*                  题目答案如下                  *\n");
@@ -451,7 +448,6 @@ int main()
     int ctrl;
     while(1)
     {
-
         printf("**************************************************\n");
         printf("*--------------自动生成四则运算系统--------------*\n");
         printf("*----------------输入“1”进入系统---------------*\n");
